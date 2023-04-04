@@ -14,7 +14,7 @@ load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
-MESSAGE_TIME = (1, 0)  # Replace with your desired time (Hour, Minute) in 24-hour format
+MESSAGE_TIME = (10, 0)  # Replace with your desired time (Hour, Minute) in 24-hour format
 
 # Define intents for the bot
 intents = discord.Intents.default()
