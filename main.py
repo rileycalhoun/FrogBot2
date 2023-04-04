@@ -29,6 +29,7 @@ async def send_image():
     channel = client.get_channel(CHANNEL_ID)
     # Send image to channel
     await channel.send(file=discord.File(image_path))
+    print(f"Sent image to channel {channel} at {datetime.now()}")
 
 # Schedule send_image function to run at 10AM every day
 scheduler.add_job(send_image, 'cron', hour=10)
