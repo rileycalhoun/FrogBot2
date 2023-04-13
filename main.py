@@ -1,52 +1,55 @@
-import os
-import discord
-from dotenv import load_dotenv
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+### A script that will run a Discord Bot using a token provided by a .env file
+
+# Import the necessary libraries
+import discord, dotenv, os, pytz
+from discord.ext import commands
+
 from datetime import datetime
-import logging
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-logging.basicConfig(level=logging.INFO)
+# Load environment variables from the .env files
+dotenv.load_dotenv()
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
+### Log the bot in and perform this task:
+### Every day at a specific time send a message to a specific channel (which id is provided in the .env file), 
+### which contains an image of the day which is taken from the ./images folder by checking what the current date 
+### is and then sending the image with the same name as the day of the week.
+async def send_image_of_the_day(channel):
 
-# Set up intents
+    berlin = datetime.now(pytz.timezone('Europe/Berlin'))
+    # Get the current day of the week
+    day_of_week = berlin.strftime('%A').lower()
+
+    # Get the channel ID from the environment variables
+    channel_id = int(os.getenv('CHANNEL_ID'))
+
+    # Get the path to the image file
+    image_path = f'./images/{day_of_week}.png'
+
+    # Send the image to the channel
+    with open(image_path, 'rb') as f:
+        await channel.send(file=discord.File(f))
+    print(f'It is currently {berlin.time()} in Berlin and the image of the day has been sent to channel {channel_id}.')
+
 intents = discord.Intents.default()
-client = discord.Client(intents=intents)
+intents.message_content = True
 
-# Set up scheduler
+# Create an instance of the client
+client = commands.Bot(command_prefix='!', intents=intents)
+
+# Define and add !fotd command
+@client.command()
+async def fotd(ctx):
+    await send_image_of_the_day(ctx.channel)
+
+# Create an instance of the scheduler
 scheduler = AsyncIOScheduler()
-scheduler.configure(timezone='Europe/Berlin')
 
-# Function to send image to channel
-async def send_image():
-    # Get current day of the week
-    day_of_week = datetime.now().strftime('%A').lower()
-    # Set image path based on day of week
-    image_path = f'images/{day_of_week}.png'
-    # Get channel
-    channel = client.get_channel(CHANNEL_ID)
-    # Send image to channel
-    await channel.send(file=discord.File(image_path))
-    print(f"Sent image to channel {channel} at {datetime.now()}")
+# Schedule the send_image_of_the_day function to run every day at a specific time
+scheduler.add_job(send_image_of_the_day, 'cron', hour=13, minute=0, args=[client])
 
-# Schedule send_image function to run at 10AM every day
-scheduler.add_job(send_image, 'cron', hour=10)
+# Start the scheduler
 scheduler.start()
 
-# Function to log time remaining until next message
-async def log_time_remaining():
-    next_run_time = scheduler.get_job('send_image').next_run_time
-    time_remaining = next_run_time - datetime.now()
-    logging.info(f'Time remaining until next message: {time_remaining}')
-
-# Schedule log_time_remaining function to run every 10 minutes
-scheduler.add_job(log_time_remaining, 'interval', minutes=10)
-
-@client.event
-async def on_ready():
-    logging.info(f'{client.user} has connected to Discord!')
-    await send_image()
-
-client.run(TOKEN)
+# Log in with the token
+client.run(os.getenv('DISCORD_TOKEN')) # Token goes here
