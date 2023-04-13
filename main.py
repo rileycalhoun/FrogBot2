@@ -65,5 +65,8 @@ scheduler.start()
 async def on_ready():
     logger.info("Ready to receive commands and send images!")
 
+# Change the status
+client.change_presence(activity=discord.activity(name='the time!', type=discord.ActivityType.watching)) 
+
 # Log in with the token
 client.run(os.getenv('DISCORD_TOKEN')) # Token goes here
