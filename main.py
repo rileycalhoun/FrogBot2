@@ -55,7 +55,7 @@ async def fotd(ctx):
 scheduler = AsyncIOScheduler()
 
 # Schedule the send_image_of_the_day function to run every day at a specific time
-scheduler.add_job(send_image_of_the_day, 'cron', hour=13, minute=0, args=[client])
+scheduler.add_job(send_image_of_the_day(client.get_channel(os.getenv("CHANNEL_ID"))), 'cron', hour=13, minute=0, args=[client])
 
 # Start the scheduler
 scheduler.start()
