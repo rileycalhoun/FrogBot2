@@ -24,7 +24,6 @@ logger = logging.getLogger(bot_name)
 ### which contains an image of the day which is taken from the ./images folder by checking what the current date 
 ### is and then sending the image with the same name as the day of the week.
 async def send_image_of_the_day(channel):
-
     berlin = datetime.now(pytz.timezone('Europe/Berlin'))
     # Get the current day of the week
     day_of_week = berlin.strftime('%A').lower()
@@ -54,8 +53,9 @@ async def fotd(ctx):
 # Create an instance of the scheduler
 scheduler = AsyncIOScheduler()
 
+channel = client.get_channel(os.getenv("CHANNEL_ID"))
 # Schedule the send_image_of_the_day function to run every day at a specific time
-scheduler.add_job(send_image_of_the_day(client.get_channel(os.getenv("CHANNEL_ID"))), 'cron', hour=13, minute=0, args=[client])
+scheduler.add_job(send_image_of_the_day, 'cron', hour=13, minute=0, args=[channel])
 
 # Start the scheduler
 scheduler.start()
