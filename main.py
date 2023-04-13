@@ -63,7 +63,7 @@ scheduler.start()
 
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.activity(name='the time!', type=discord.ActivityType.watching)) # Change the status
+    await client.change_presence(activity=discord.Activity(name='the time!', type=discord.ActivityType.watching)) # Change the status
     logger.info("Ready to receive commands and send images!")
 
 # Log in with the token
