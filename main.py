@@ -33,8 +33,7 @@ channel_id = int(os.getenv('CHANNEL_ID'))
 ### Every day at a specific time send a message to a specific channel (which id is provided in the .env file), 
 ### which contains an image of the day which is taken from the ./images folder by checking what the current date 
 ### is and then sending the image with the same name as the day of the week.
-async def called_once_a_day(): # fired once every day
-    channel = bot.get_guild(guild_id).get_channel(channel_id)
+async def send_frog(channel): # fired once every day
     berlin_time = datetime.now(TZ)
     day_of_week = berlin_time.strftime('%A').lower()
     if day_of_week == "sunday":
@@ -46,9 +45,15 @@ async def called_once_a_day(): # fired once every day
         await channel.send(file=discord.file(f))
         logger.info(f'It is currently {berlin.time()} in Berlin and the image of the day has been sent to channel {channel_id}.')
 
+# frog of the day command
 @bot.command()
 async def fotd(ctx):
-    await called_once_a_day()
+    day_of_week = berlin_time.strftime('%A').lower()
+    if day_of_week == "sunday":
+        ctx.channel.send("it's sunday in germany, so i don't have an image to send at the moment <3 check back tomorrow!")
+        return
+
+    await send_frog(ctx.channel)
 
 @bot.event
 async def on_ready():
@@ -61,12 +66,15 @@ async def background_task():
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()
         await asyncio.sleep(seconds)
+
     while(True):
         now = datetime.utcnow()
         target_time = datetime.combine(now.date(), WHEN)
         seconds_until_target = (target_time - now).total_seconds()
         await asyncio.sleep(seconds_until_target)
-        await called_once_a_day
+
+        channel = bot.get_guild(guild_id).get_channel(channel_id)
+        await send_frog(channel)
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = asyncio.sleep(seconds)
 
