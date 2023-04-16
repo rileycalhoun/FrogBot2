@@ -34,7 +34,6 @@ channel_id = int(os.getenv('CHANNEL_ID'))
 ### which contains an image of the day which is taken from the ./images folder by checking what the current date 
 ### is and then sending the image with the same name as the day of the week.
 async def called_once_a_day(): # fired once every day
-    await bot.wait_util_ready() # ensures that the guild cache is ready so that the channel can be found
     channel = bot.get_guild(guild_id).get_channel(channel_id)
     berlin_time = datetime.now(TZ)
     image_path = f'./images/{day_of_week}.png'
