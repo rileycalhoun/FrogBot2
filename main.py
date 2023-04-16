@@ -36,6 +36,7 @@ channel_id = int(os.getenv('CHANNEL_ID'))
 async def called_once_a_day(): # fired once every day
     channel = bot.get_guild(guild_id).get_channel(channel_id)
     berlin_time = datetime.now(TZ)
+    day_of_week = berlin_time.strftime('%A').lower()
     image_path = f'./images/{day_of_week}.png'
 
     with open (image_path, 'rb') as f:
