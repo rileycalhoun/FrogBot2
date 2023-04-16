@@ -37,6 +37,9 @@ async def called_once_a_day(): # fired once every day
     channel = bot.get_guild(guild_id).get_channel(channel_id)
     berlin_time = datetime.now(TZ)
     day_of_week = berlin_time.strftime('%A').lower()
+    if day_of_week == "sunday":
+        logger.info(f'It is currently {berlin.time()} in Berlin and there is no image for Sunday. FrogBot is taking the day off.')
+        return
     image_path = f'./images/{day_of_week}.png'
 
     with open (image_path, 'rb') as f:
