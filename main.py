@@ -48,6 +48,7 @@ async def send_frog(channel): # fired once every day
 # frog of the day command
 @bot.command()
 async def fotd(ctx):
+    berlin_time = datetime.now(TZ)
     day_of_week = berlin_time.strftime('%A').lower()
     if day_of_week == "sunday":
         ctx.channel.send("it's sunday in germany, so i don't have an image to send at the moment <3 check back tomorrow!")
