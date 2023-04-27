@@ -42,7 +42,7 @@ async def send_frog(channel): # fired once every day
     image_path = f'./images/{day_of_week}.png'
 
     with open (image_path, 'rb') as f:
-        await channel.send(file=discord.file(f))
+        await channel.send(file=discord.File(f))
         logger.info(f'It is currently {berlin.time()} in Berlin and the image of the day has been sent to channel {channel_id}.')
 
 # frog of the day command
